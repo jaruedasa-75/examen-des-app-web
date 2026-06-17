@@ -53,7 +53,7 @@ export default {
           { to: '/dashboard/inicio', label: 'Inicio', icon: 'bi bi-house-door' },
           { to: '/dashboard/catalogo', label: 'Catálogo', icon: 'bi bi-grid' },
           { to: '/dashboard/productos', label: 'Productos', icon: 'bi bi-bag' },
-          { to: '/dashboard/clientes', label: 'Clientes', icon: 'bi bi-people' },
+          { to: '/dashboard/usuarios', label: 'Usuarios', icon: 'bi bi-people' },
           { to: '/dashboard/pedidos', label: 'Pedidos', icon: 'bi bi-receipt' }
         ]
       }

@@ -73,9 +73,8 @@
               </form>
 
               <div class="mt-4 p-3 rounded-4 bg-light">
-                <div class="fw-semibold mb-1">Usuarios de prueba</div>
-                <div class="small text-muted">admin / 1234</div>
-                <div class="small text-muted">cliente / 1234</div>
+                <div class="fw-semibold mb-1">Acceso</div>
+                <div class="small text-muted">Ingresa con un usuario registrado en el panel de Usuarios.</div>
               </div>
             </div>
           </div>
@@ -86,8 +85,8 @@
 </template>
 
 <script>
-import usuarios from '../assets/usuarios.json'
-import { getAuth, setAuth } from '../utils/storage'
+import { getUsers } from '../services/userService'
+import { getAuth, setAuth, generateToken } from '../utils/storage'
 
 export default {
   name: 'LoginView',
@@ -105,7 +104,7 @@ export default {
     }
   },
   methods: {
-    login() {
+    async login() {
       this.error = ''
 
       if (!this.usuario || !this.password) {
@@ -115,24 +114,29 @@ export default {
 
       this.loading = true
 
-      window.setTimeout(() => {
-        const match = usuarios.find(
+      try {
+        const { data } = await getUsers()
+        const match = data.find(
           (item) => item.usuario === this.usuario && item.password === this.password
         )
 
         if (match) {
           setAuth({
+            id: match.id,
             usuario: match.usuario,
             nombre: match.nombre,
-            rol: match.rol
+            rol: match.rol,
+            token: generateToken(match.usuario)
           })
           this.$router.push('/dashboard')
         } else {
           this.error = 'Usuario o contraseña incorrectos.'
         }
-
+      } catch (err) {
+        this.error = 'No se pudo conectar con el servidor. Verifica tu conexión.'
+      } finally {
         this.loading = false
-      }, 350)
+      }
     }
   }
 }

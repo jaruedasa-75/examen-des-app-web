@@ -80,21 +80,21 @@
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
           <div>
-            <h5 class="mb-1">{{ selectedProduct.name }}</h5>
-            <div class="text-muted small">{{ selectedProduct.category }} · {{ selectedProduct.color }}</div>
+            <h5 class="mb-1">{{ selectedProduct.nombre }}</h5>
+            <div class="text-muted small">{{ selectedProduct.categoria }} · {{ selectedProduct.color }}</div>
           </div>
           <button class="btn btn-sm btn-outline-secondary" @click="selectedProduct = null">Cerrar</button>
         </div>
         <div class="row g-3 mt-3">
           <div class="col-md-4">
-            <img :src="selectedProduct.image" :alt="selectedProduct.name" class="img-fluid rounded-4 object-cover" style="width: 100%; height: 220px;">
+            <img :src="selectedProduct.imagen" :alt="selectedProduct.nombre" class="img-fluid rounded-4 object-cover" style="width: 100%; height: 220px;">
           </div>
           <div class="col-md-8">
-            <p class="text-muted">{{ selectedProduct.description }}</p>
+            <p class="text-muted">{{ selectedProduct.descripcion }}</p>
             <div class="d-flex flex-wrap gap-2">
               <span class="badge text-bg-light text-dark">Stock {{ selectedProduct.stock }}</span>
-              <span class="badge text-bg-light text-dark">Tallas {{ selectedProduct.sizes }}</span>
-              <span class="badge text-bg-light text-dark">Precio ${{ formatPrice(selectedProduct.price) }}</span>
+              <span class="badge text-bg-light text-dark">Tallas {{ selectedProduct.tallas }}</span>
+              <span class="badge text-bg-light text-dark">Precio ${{ formatPrice(selectedProduct.precio) }}</span>
             </div>
           </div>
         </div>
@@ -105,6 +105,7 @@
 
 <script>
 import ProductCardComponent from '../components/ProductCardComponent.vue'
+import { getProducts } from '../services/productService'
 import { readJSON, STORAGE_KEYS } from '../utils/storage'
 
 export default {
@@ -122,23 +123,31 @@ export default {
   },
   computed: {
     featuredProducts() {
-      return this.products.filter((item) => item.featured).slice(0, 4)
+      return this.products.filter((item) => item.destacado).slice(0, 4)
     },
     productsCount() {
       return this.products.length
     }
   },
   mounted() {
-    this.loadState()
-    this._onStorage = () => this.loadState()
+    this.loadProducts()
+    this.loadLocalState()
+    this._onStorage = () => this.loadLocalState()
     window.addEventListener('shop:storage', this._onStorage)
   },
   beforeUnmount() {
     window.removeEventListener('shop:storage', this._onStorage)
   },
   methods: {
-    loadState() {
-      this.products = readJSON(localStorage, STORAGE_KEYS.products, [])
+    async loadProducts() {
+      try {
+        const { data } = await getProducts()
+        this.products = data
+      } catch (err) {
+        this.products = []
+      }
+    },
+    loadLocalState() {
       const cart = readJSON(localStorage, STORAGE_KEYS.cart, [])
       const orders = readJSON(localStorage, STORAGE_KEYS.orders, [])
       this.cartCount = cart.reduce((acc, item) => acc + Number(item.quantity || 0), 0)

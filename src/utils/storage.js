@@ -35,3 +35,8 @@ export function setAuth(user) {
 export function clearAuth() {
   clearJSON(sessionStorage, STORAGE_KEYS.auth)
 }
+
+export function generateToken(usuario) {
+  const raw = `${usuario}.${Date.now()}.${Math.random().toString(36).slice(2)}`
+  return window.btoa(raw)
+}

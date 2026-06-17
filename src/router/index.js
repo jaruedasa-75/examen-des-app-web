@@ -7,7 +7,7 @@ import DashboardHomeView from '../views/DashboardHomeView.vue'
 import CatalogView from '../views/CatalogView.vue'
 import CartView from '../views/CartView.vue'
 import ProductView from '../views/ProductView.vue'
-import ClientsView from '../views/ClientsView.vue'
+import UsersView from '../views/UsersView.vue'
 import OrdersView from '../views/OrdersView.vue'
 
 function dashboardTarget() {
@@ -54,9 +54,9 @@ const routes = [
         meta: { requiresAuth: true, roles: ['Admin'] }
       },
       {
-        path: 'clientes',
-        name: 'dashboard-clients',
-        component: ClientsView,
+        path: 'usuarios',
+        name: 'dashboard-users',
+        component: UsersView,
         meta: { requiresAuth: true, roles: ['Admin'] }
       },
       {
